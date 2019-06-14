@@ -1,0 +1,360 @@
+= Mastering Python
+:doctype: article
+:encoding: utf-8
+:lang: en
+:toc: left
+:numbered:
+
+****
+Python is an interpreted, interactive, object-oriented programming language.
+It is strongly and implicitly typed so data types are enforced at runtime and different types cannot be concatenated (string and integers).
+Python is used in some of the largest internet sites like Reddit, Dropbox or YouTube. Also Instagram and Pinterest are powered by https://www.djangoproject.com/[Django] (a popular Python web framework). LucasFilms's visual effects use Python too.
+****
+
+=== Getting and installing Python 3.x
+You can download the installer for the last version of Python for *Windows* from the https://www.python.org/downloads/[official website]. 
+For *Linux* distributions, Python is normally included and can be upgraded to the latest version using the package manager. *Mac* users can use Homebrew (package manager) or the https://www.python.org/downloads/mac-osx/[official download link] to get the installer.
+
+[TIP]
+====
+During the installation process, make sure to select the option to add Python to your system PATH. By doing so, you will be able to use and call Python functions from the command line in an easier and convenient way.
+====
+
+image::python-installation.png[]
+
+Once you have installed Python in your system, you can check with `python -v` or `python3 -v` on the Command Line, depending on your OS and version.
+
+[NOTE]
+====
+Your OS distribution may come with Python preinstalled, make sure that you are using the last distribution, or at least a 3.x version. Old 2.x versions might have more compatibilty with some third-party libraries, however syntax is different from 3.x versions and newer versions have more features, bug fixes and refinements.
+====
+
+=== Simple functions and types with Python
+Once you have succesfully installed Python in your system, you can start executing code directly in the interactive shell or create a *.py* file to be executed with the interpreter.
+
+To open the interpreter, simply type `python` (or `python file.py` to run a script) on your Command Line interface.
+
+image::python-shell.PNG[]
+
+Now you are ready to execute some code. Only basic functionalities are introduced in this doc; for more advanced information, please refer to *Python Projects by Laura Cassell, Alan Gauld* book on Skillport.
+
+==== Hello world with Python
+
+Write the next command on the interpreter:
+
+ >>> print('Hello')
+ 
+and you should see `Hello` as the output from the command. More complex strings can be printed using `format()` function:
+
+ >>> name = 'Capgemini'
+ >>> print('Hello {0}! How are you?'.format(name))
+
+You should get `Hello Capgemini! How are you?` as output. To get  more info about `format()` function, you can check this https://pyformat.info/[link].
+
+==== Your first Function with Python
+
+You can define a function with the `def` keyword:
+
+ >>> def hello(name):
+ ...     print('Hello {0}! How are you?'.format(name))
+ ...
+
+[IMPORTANT]
+====
+Notice that Python does not use EOL markers `;` or curly brackets `{}` to define statements or statement blocks like other programming languages do. Instead, Python programs get structured through colons `:` and indentation.
+====
+
+Once you have defined a function, you can call it with `hello('Capgemini')`.
+
+===== Functions with multiple returns
+
+Functions on Python can return more than one element in an object called *Tuple*, that is kind of an immutable list. You can read https://www.w3schools.com/python/python_tuples.asp[this article] if you need more information about them.
+
+Let's write a function with more than one return now:
+
+ >>> def multiple_output(a, b):
+ ...     sum = a + b
+ ...     subs = a - b
+ ...     return sum, subs
+ ...
+
+And you will get a tuple as output from the function call
+
+ >>> multiple_output(6, 2)
+ (8, 4)
+
+===== Empty Functions
+
+With Python you can also define **empty functions**. For that, you will need to use the `pass` keyword. It is needed syntactically inside a function, but does not execute any code.
+
+ >>> def empty_function():
+ ...     pass
+ ...
+
+===== Generator Functions
+
+*Generator functions* are also very useful. Imagine passing a generator of an array of elements instead of an array with the elements precomputed as `[1, 2, 3, ...]`. You can use the `yield` keyword instead of `return` for this purpose. Check this https://www.python.org/dev/peps/pep-0289/[link] for more information.
+
+We can first define a function for generating the elements:
+ 
+ >>> def generate_first_elements(n):
+ ...     num = 0
+ ...     while num < n:
+ ...             yield num
+ ...             num += 1
+ ...
+ 
+Then, we can save the generator as a variable:
+
+ >>> elements = generate_first_elements(1000)
+ >>> elements
+ <generator object generate_first_elements at 0x0544CBD0>
+ 
+And use it as the input for another function:
+
+ >>> sum(elements)
+ 499500
+
+The `range()` function can also be used as generator in some cases and it will generate numbers within the range specified:
+
+ >>> for num in range(0, 100):
+ ...     print(num)
+ ...
+
+===== List Comprehension
+
+Python List Comprehension provide an alternative syntax for creating lists or other sequential data types in a simple, one-liner way:
+
+ >>> [letter for letter in 'Capgemini']
+ ['C', 'a', 'p', 'g', 'e', 'm', 'i', 'n', 'i']
+ 
+Or even more complex list comprehensions like the following:
+
+ >>> [x ** 2 for x in range(100) if x % 2 == 0 if x % 5 == 0]
+ [0, 100, 400, 900, 1600, 2500, 3600, 4900, 6400, 8100]
+
+ >>> [x * y for x in [20, 40, 60] for y in [2, 4, 6]]
+ [40, 80, 120, 80, 160, 240, 120, 240, 360]
+ 
+===== Manipulating Lists
+With Python, you can create and manipulate lists with mixed types:
+
+ >>> mixed_list = ["Hello World", [4, 5, 6], False, (1,2,3)]
+
+You can access the *last element* of a list using `[-1]` index:
+
+ >>> mixed_list[-1]
+ (1, 2, 3)
+
+You can *extract a sublist* indicating start and/or end position `[start:end]`:
+
+ >>> mixed_list[:2]
+ ['Hello World', [4, 5, 6]]
+ 
+ >>> mixed_list[2:]
+ [False, (1, 2, 3)]
+ 
+ >>> mixed_list[2:3]
+ [False]
+
+To get the *number of elements* of a list you can use the `len()` function:
+
+ >>> len(mixed_list)
+ 4
+ 
+You can also *add elements* to a list with `.append(el)` or *take and remove* an element using `.pop(index)`. 
+
+Lists in Python also include a method for *sorting* `.sort()` and you can even *add* `+` two or more lists:
+
+ >>> a = [2, 3, 1]
+ >>> a.sort()
+ >>> a
+ [1, 2, 3]
+ 
+ >>> b = [5, 6, 4]
+ >>> b.sort()
+ >>> b
+ [4, 5, 6]
+ 
+ >>> a + b
+ [1, 2, 3, 4, 5, 6]
+ 
+[CAUTION]
+====
+You can convert a list into a tuple by calling `tuple(mixed_list)`. However, **tuples are inmutable**, so many of the list methods will not work on tuples.
+====
+
+To chec if a list contains an element or not you just need to use the `in` operator:
+
+ >>> a = [1, 2, 3, 4]
+
+ >>> 9 in a
+ False
+
+ >>> 9 not in a
+ True
+
+Read more about Python types and methods in this https://docs.python.org/3.4/library/stdtypes.html[link].
+
+===== Using lists as pipelines
+In practice, you can even use Python lists as a way of defining pipelines (execute several functions, one before each other). Just add the functions' names to a list as normal elements and then iterate:
+
+ >>> def f_a():
+ ...     print('Hello')
+ 
+ >>> def f_b():
+ ...     print('World')
+ 
+ >>> pipeline = [f_a, f_b]
+ >>> for job in pipeline:
+ ...     job()
+ 
+ Hello
+ World
+ 
+==== Your first Class with Python
+
+You can define a Class with Python using the `class` keyword:
+
+[source,python]
+----
+class Person():
+    def __init__(self, name, age): //<1>
+        self.name = name
+        self.age = age
+    
+    def hello(self): //<2>
+        print("Hello World! I'm {0}.".format(self.name))
+----
+<1> The `\\__init__` method is automatically called on instantiation for the new created instance. The first argument `self` is a convention for indicating that a method applies to an instance of a class (as the function definition is not necessary need to be textually enclosed in the class definition).
+<2> A method for saying `Hello World!` and the name stored inside the object.
+
+To create an object of `Person` class:
+
+ >>> peter = Person('Peter', 25)  
+
+However, if you try to print the object, you will get just a pointer for that object in memory:
+
+ >>> print(peter)
+ <__main__.Person object at 0x054565F0>
+
+*Extending a Class* with Python is very simple. Let's extend the `Person` class and overwrite the method responsible of creating the readable string:
+
+[source,python]
+----
+class PrintablePerson(Person): // <1>
+    def __str__(self): // <2>
+        return "{0} is {1} years old".format(self.name, self.age)
+----
+<1> Indicate that we are extending base class `Person`
+<2> Redefine `\\__str__` method to generate a readable string.
+
+Now you can create an instance of this new class and print the object:
+
+ >>> peter = PrintablePerson('Peter', 25)
+ >>> print(peter)
+ Peter is 25 years old
+ 
+Read more about Classes in this https://docs.python.org/3.7/tutorial/classes.html[link].
+
+=== Working with modules in Python
+
+Python has plenty of modules available to extend its functionalities. Some of them are built into the core itself and others can be found as third party packages / libraries.
+
+Let's import `math` library to use `pi` and `sqrt` function:
+
+ >>> import math
+ 
+ >>> math.pi
+ 3.141592653589793
+ 
+ >>> math.sqrt(36)
+ 6.0
+ 
+Take a look at the modules available in this https://docs.python.org/3.7/whatsnew/3.5.html#improved-modules[link].
+
+==== Managing Python modules using Pip
+
+Pip is a package installer / manager for Python. With it you can install packages from the https://pypi.org/[Python Package Index], a repository of software shared by the Python community.
+
+For installing Pip, first download the `get-pip.py` file that will work as installer:
+
+  curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+
+Then run the downloaded script with your local Python installation:
+
+ python get-pip.py
+
+==== Using virtual environments with Python
+
+Virtual environments are local copies of an existing version of the Python interpreter and a local package management. They are really usefull because they allow you to install and manage packages inside an environment, not affecting the main Python installation. 
+
+First install the `virtualenv` package in order to create virtual environments:
+
+ pip install virtualenv
+
+Then specify the path where to create the virtualenv, in this case, we will create it in a folder called `myenv`:
+
+ virtualenv myenv
+
+To activate the environment:
+
+* If you are using Mac OS or Linux:
+ 
+ source myenv/bin/activate
+ 
+* If your are using Windows:
+
+ myenv\Scripts\activate
+ 
+[NOTE]
+====
+If you want to deactivate the virtual environment and use the original global Python installation use the command `deactivate`.
+====
+
+Once you have activated the environment you will notice that your bash indicates that you are running the code inside it:
+
+image::python-environment.PNG[]
+
+You can then install any package inside the environment. Let's install the `requests` package that allows to do http requests from Python.
+
+ (myenv) λ pip install requests
+ 
+Then, if you execute the Python interpreter inside the environment, you will be able to import and use it:
+
+ (myenv) λ python
+ >>> import requests
+ >>> requests.get('https://www.google.es').text
+
+[TIP]
+====
+You can list all the installed packages using the `pip list` command:
+
+ (myenv) λ pip list
+ Package    Version
+ ---------- --------
+ pip        19.1.1
+ requests   2.22.0
+ setuptools 41.0.1
+ wheel      0.33.4
+====
+
+For production purposes, you can save all the installed packages specification into a requirements file using `pip freeze` command:
+
+ (myenv) λ pip freeze > requirements.txt
+
+Then, you can use the requirements file to reinstall all the packages needed in your Python instance. 
+
+You can also specify the installation path if you want to use an specific folder that can be later defined as source folder in your editor. In this case we will be using `libs` folder to contain all the required packages:
+
+ (myenv) λ pip install -r requirements.txt -t libs --upgrade
+
+image::python-source-folder.PNG[]
+
+=== Recommended IDE for Python development
+
+You can choose any IDE of your convenience for developing with Python.
+
+Sublime Text, Atom and Visual Studio Code include extensions for dealing with Python. Eclipse has a PyDev extension to develope with Python.
+
+However, we recommend to use https://www.jetbrains.com/pycharm/[PyCharm] Community from the JetBrains family as it is the most optimized and complete IDE, with Smart Assistance on code completion and error detection, and focused on Boosting Productivity and Code Quality.

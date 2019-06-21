@@ -2,20 +2,6 @@ version: '3.4'
 
 services:
 
-  api:
-    image: api
-    hostname: api
-    container_name: api
-    build:
-      context: ./DockerFiles/Api
-      dockerfile: Dockerfile
-    links:
-      - elastic
-    depends_on:
-      - elastic
-    networks:
-      - spark
-
   elastic:
     image: elastic
     hostname: elastic
@@ -34,13 +20,24 @@ services:
     networks:
       - spark
 
+  elastic-ui:
+    image: elastichq/elasticsearch-hq
+    hostname: elastic-ui
+    container_name: elastic-ui
+    depends_on:
+      - elastic
+    ports:
+      - 5000:5000
+    networks:
+      - spark
+
   spark-master:
     container_name: spark-master
     image: spark
     build:
       context: ./DockerFiles/Spark
       dockerfile: Dockerfile
-    command: bin/spark-class org.apache.spark.deploy.master.Master -h spark-master
+    command: /spark/bin/spark-class org.apache.spark.deploy.master.Master -h spark-master
     hostname: spark-master
     environment:
       MASTER: spark://spark-master:7077
@@ -69,7 +66,7 @@ services:
   spark-worker1:
     image: spark
     container_name: spark-worker1
-    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    command: /spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     hostname: spark-worker1
     environment:
       SPARK_CONF_DIR: /conf
@@ -100,7 +97,7 @@ services:
   spark-worker2:
     image: spark
     container_name: spark-worker2
-    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    command: /spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     hostname: spark-worker2
     environment:
       SPARK_CONF_DIR: /conf
@@ -127,6 +124,41 @@ services:
       - spark
     depends_on:
       - spark-master
+
+  redis:
+    image: 'bitnami/redis:latest'
+    container_name: redis
+    hostname: redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    volumes:
+      - ./DockerShared/Redis/persistence:/bitnami/redis/data
+    networks:
+      - spark
+    depends_on:
+      - spark-master
+  
+  api:
+    image: api
+    hostname: api
+    container_name: api
+    build:
+      context: ./api
+      dockerfile: ../Dockerfiles/Api/DockerFile
+    ports:
+      - 6060:6060
+    links:
+      - elastic
+      - redis
+      - spark-master
+    depends_on:
+      - elastic
+      - spark-master
+      - redis
+    networks:
+      - spark
   
 networks:
   spark:

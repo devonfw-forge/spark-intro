@@ -9,10 +9,13 @@ TYPE_NAME = 'passenger'
 ID_FIELD = 'passengerid'
 
 import csv
-
+import sys
 import time
+from pprint import pprint
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, ConnectionError, ElasticsearchException
+
+sys.tracebacklimit = None
 
 csv_input_file = open('test.csv')
 
@@ -37,16 +40,22 @@ for row in csv_file_object:
     bulk_data.append(op_dict)
     bulk_data.append(data_dict)
 
+time.sleep(25)
+
 # create ES client, create index
 es = Elasticsearch(hosts = [ES_HOST])
 
 def get_elastic_client():
     try:
         es.indices.exists('RANDOM')
-    except Elasticsearch.exceptions.ConnectionError as error:
+    except Exception as inst:
         print('Waiting for connection with ES')
         time.sleep(1)
         get_elastic_client()        
+
+get_elastic_client()
+
+print('Populating ES with Sample Data')
 
 if es.indices.exists(INDEX_NAME):
     print("deleting '%s' index..." % (INDEX_NAME))
@@ -74,8 +83,7 @@ res = es.bulk(index = INDEX_NAME, body = bulk_data, refresh = True)
 # sanity check
 print("searching...")
 res = es.search(index = INDEX_NAME, size=2, body={"query": {"match_all": {}}})
-print(" response: '%s'" % (res))
+print(" response: OK")
+# pprint(res)
 
-print("results:")
-for hit in res['hits']['hits']:
-    print(hit["_source"])
+print('ES Service Populated with Sample Data!')

@@ -3,11 +3,9 @@ FROM python:3
 WORKDIR /usr/src/app
 
 # Install required libraries
-COPY ./config/requirements.txt ./
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./data/* ./
+COPY main.py ./
 
-CMD ["python", "dump_titanic_data.py"]
-
-# CMD [ "python", "./your-daemon-or-script.py" ]
+CMD [ "python", "main.py" ]
